@@ -22,7 +22,7 @@
             margin-bottom: 25px;
             font-family: 'Georgia', serif;
             letter-spacing: 2px;
-            color: white; /* কালো রঙ */
+            color: white;
             animation: fadeIn 2s ease-in-out;
         }
         .inputBox {
@@ -61,9 +61,33 @@
             font-size: 24px;
             margin-top: 20px;
             font-weight: bold;
-            color: #ffeb3b;
             text-align: center;
             animation: fadeIn 2s ease-in-out;
+
+            /* Gradient + Glow effect */
+            background: linear-gradient(
+              270deg,
+              red,
+              orange,
+              yellow,
+              green,
+              blue,
+              indigo,
+              violet
+            );
+            background-size: 800% 800%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbowWave 10s ease infinite, fadeIn 2s ease-in-out;
+
+            text-shadow: 0 0 10px rgba(255,255,255,0.8),
+                         0 0 20px rgba(255,255,255,0.6),
+                         0 0 30px rgba(255,255,255,0.4);
+        }
+        @keyframes rainbowWave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         button {
             padding: 12px 25px;
@@ -71,7 +95,7 @@
             border-radius: 25px;
             border: none;
             font-size: 16px;
-            background: linear-gradient(45deg, navy, #000080); /* Navy blue gradient */
+            background: linear-gradient(45deg, navy, #000080);
             color: white;
             cursor: pointer;
             transition: 0.3s;
@@ -122,8 +146,8 @@
                     "May your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments. Happy Birthday! 🎉🎂";
                 messageDiv.style.display = "block";
 
-                // ২ সেকেন্ড পর ভিডিও চালু হবে
-                setTimeout(playVideo, 2000);
+                // ৪ সেকেন্ড পর ভিডিও চালু হবে
+                setTimeout(playVideo, 4000);
             } else {
                 alert("Please enter your name!");
             }
