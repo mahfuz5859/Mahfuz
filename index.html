@@ -10,20 +10,22 @@
             height: 100vh;
             margin: 0;
             flex-direction: column;
-            background-image: url('2.jpg'); /* তোমার ছবির নাম */
+            background-image: url('2.jpg');
             background-size: cover;
             background-position: center;
             font-family: 'Segoe UI', sans-serif;
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
         }
         h2 {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
             margin-bottom: 25px;
             font-family: 'Georgia', serif;
             letter-spacing: 2px;
             color: white;
             animation: fadeIn 2s ease-in-out;
+            text-shadow: 0 0 10px #ff4081,
+                         0 0 20px #ff4081,
+                         0 0 30px #ff4081;
         }
         .inputBox {
             position: relative;
@@ -39,14 +41,13 @@
             color: #333;
             outline: none;
             border: 3px solid transparent;
-            background-clip: padding-box;
         }
         .inputBox::before {
             content: "";
             position: absolute;
             top: -3px; left: -3px; right: -3px; bottom: -3px;
             border-radius: 25px;
-            background: linear-gradient(270deg, #ff4081, #e91e63, #2196f3, #4caf50);
+            background: linear-gradient(270deg, #ff4081, #e91e63, #ff0000, #ff9800, #4caf50, violet);
             background-size: 600% 600%;
             z-index: -1;
             animation: rotateBorder 6s linear infinite;
@@ -58,31 +59,17 @@
         }
         #message {
             display: none;
-            font-size: 24px;
+            font-size: 30px;
             margin-top: 20px;
             font-weight: bold;
             text-align: center;
-            animation: fadeIn 2s ease-in-out;
-
-            /* Gradient + Glow effect */
-            background: linear-gradient(
-              270deg,
-              red,
-              orange,
-              yellow,
-              green,
-              blue,
-              indigo,
-              violet
-            );
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(270deg, red, orange, yellow, green, violet);
             background-size: 800% 800%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: rainbowWave 10s ease infinite, fadeIn 2s ease-in-out;
-
-            text-shadow: 0 0 10px rgba(255,255,255,0.8),
-                         0 0 20px rgba(255,255,255,0.6),
-                         0 0 30px rgba(255,255,255,0.4);
+            animation: rainbowWave 10s ease infinite;
+            white-space: pre-line;
         }
         @keyframes rainbowWave {
             0% { background-position: 0% 50%; }
@@ -110,7 +97,6 @@
             margin-top: 20px;
             animation: fadeIn 1.5s ease-in-out;
         }
-
         @keyframes fadeIn {
             from {opacity: 0;}
             to {opacity: 1;}
@@ -131,23 +117,73 @@
     <div id="message"></div>
 
     <div id="videoSection">
-        <video id="birthdayVideo" width="400" controls>
+        <video id="birthdayVideo" width="400" controls playsinline>
             <source src="Main H.mp4" type="video/mp4">
             Your browser does not support video.
         </video>
     </div>
 
+    <!-- তোমার keypress sound ফাইল -->
+    <audio id="typeSound" src="keypreessiund.mp3" preload="auto"></audio>
+
     <script>
+        // Input box এ letter টাইপ করলে sound বাজবে (শুধু একবার)
+        document.getElementById("nameInput").addEventListener("keypress", function() {
+            let typeSound = document.getElementById("typeSound");
+            typeSound.pause();
+            typeSound.currentTime = 0;
+            typeSound.play();
+        });
+
         function showMessage() {
             let name = document.getElementById("nameInput").value;
             if(name.trim() !== "") {
                 let messageDiv = document.getElementById("message");
-                messageDiv.innerHTML = "🎉 Happy Birthday, " + name + "! 🎉<br><br>" +
-                    "May your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments. Happy Birthday! 🎉🎂";
                 messageDiv.style.display = "block";
 
-                // ৪ সেকেন্ড পর ভিডিও চালু হবে
-                setTimeout(playVideo, 4000);
+                // তিন লাইন আলাদা
+                let firstLine = "🎉 Happy Birthday, " + name + "! 🎉";
+                let secondLine = "May your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments.";
+                let thirdLine = "Happy Birthday! 🎂";
+                
+                let fullMessage = firstLine + "\n" + secondLine + "\n" + thirdLine;
+                let i = 0;
+                messageDiv.innerHTML = "";
+
+                let typeSound = document.getElementById("typeSound");
+
+                let interval = setInterval(() => {
+                    messageDiv.innerHTML += fullMessage.charAt(i);
+
+                    // প্রতিটি অক্ষরের সাথে sound বাজবে
+                    if(fullMessage.charAt(i).trim() !== "") {
+                        typeSound.pause();
+                        typeSound.currentTime = 0; 
+                        typeSound.play();
+                    }
+
+                    i++;
+                    if(i >= fullMessage.length) {
+                        clearInterval(interval);
+                        // টাইপিং শেষ হলে sound বন্ধ
+                        typeSound.pause();
+                        typeSound.currentTime = 0;
+
+                        setTimeout(playVideo, 4000);
+                    }
+                }, 100);
+
+                // Enter ক্লিকের সময় fullscreen request
+                let video = document.getElementById("birthdayVideo");
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitEnterFullscreen) {
+                    video.webkitEnterFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
             } else {
                 alert("Please enter your name!");
             }
@@ -158,15 +194,6 @@
             let video = document.getElementById("birthdayVideo");
             videoSection.style.display = "block";
             video.play();
-
-            // ফুলস্ক্রিনে চালানো
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) {
-                video.msRequestFullscreen();
-            }
         }
     </script>
 </body>
