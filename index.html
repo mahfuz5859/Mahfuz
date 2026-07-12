@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Birthday App</title>
+    <!-- Lexend font যোগ করা হলো -->
+    <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -63,7 +65,7 @@
             margin-top: 20px;
             font-weight: bold;
             text-align: center;
-            font-family: 'Comic Sans MS', cursive;
+            font-family: 'Lexend', sans-serif; /* Lexend font */
             background: linear-gradient(270deg, red, orange, yellow, green, violet);
             background-size: 800% 800%;
             -webkit-background-clip: text;
@@ -95,9 +97,16 @@
         #videoSection {
             display: none;
             margin-top: 20px;
-            animation: fadeIn 1.5s ease-in-out;
+            opacity: 0; /* শুরুতে লুকানো */
+        }
+        #videoSection.fade-in {
+            animation: fadeVideo 3s ease forwards; /* fade-in effect */
         }
         @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        @keyframes fadeVideo {
             from {opacity: 0;}
             to {opacity: 1;}
         }
@@ -119,20 +128,20 @@
     <div id="videoSection">
         <video id="birthdayVideo" width="400" controls playsinline>
             <source src="Main H.mp4" type="video/mp4">
-            Your browser does not support video.
         </video>
     </div>
 
-    <!-- তোমার keypress sound ফাইল -->
-    <audio id="typeSound" src="keypreessiund.mp3" preload="auto"></audio>
+    <!-- Background music -->
+    <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
 
     <script>
-        // Input box এ letter টাইপ করলে sound বাজবে (শুধু একবার)
-        document.getElementById("nameInput").addEventListener("keypress", function() {
-            let typeSound = document.getElementById("typeSound");
-            typeSound.pause();
-            typeSound.currentTime = 0;
-            typeSound.play();
+        // ওয়েবসাইটে ঢুকলেই background music auto play হবে
+        window.addEventListener("load", function() {
+            let bgMusic = document.getElementById("bgMusic");
+            bgMusic.volume = 0.2; // 20% volume
+            bgMusic.play().catch(err => {
+                console.log("Autoplay blocked:", err);
+            });
         });
 
         function showMessage() {
@@ -141,34 +150,16 @@
                 let messageDiv = document.getElementById("message");
                 messageDiv.style.display = "block";
 
-                // তিন লাইন আলাদা
-                let firstLine = "🎉 Happy Birthday, " + name + "! 🎉";
-                let secondLine = "May your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments.";
-                let thirdLine = "Happy Birthday! 🎂";
+                let fullMessage = "🎉 Happy Birthday, " + name + " 🎉\nMay your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments.\nHappy Birthday 🎂";
                 
-                let fullMessage = firstLine + "\n" + secondLine + "\n" + thirdLine;
                 let i = 0;
                 messageDiv.innerHTML = "";
 
-                let typeSound = document.getElementById("typeSound");
-
                 let interval = setInterval(() => {
                     messageDiv.innerHTML += fullMessage.charAt(i);
-
-                    // প্রতিটি অক্ষরের সাথে sound বাজবে
-                    if(fullMessage.charAt(i).trim() !== "") {
-                        typeSound.pause();
-                        typeSound.currentTime = 0; 
-                        typeSound.play();
-                    }
-
                     i++;
                     if(i >= fullMessage.length) {
                         clearInterval(interval);
-                        // টাইপিং শেষ হলে sound বন্ধ
-                        typeSound.pause();
-                        typeSound.currentTime = 0;
-
                         setTimeout(playVideo, 4000);
                     }
                 }, 100);
@@ -192,8 +183,16 @@
         function playVideo() {
             let videoSection = document.getElementById("videoSection");
             let video = document.getElementById("birthdayVideo");
+            let bgMusic = document.getElementById("bgMusic");
+
             videoSection.style.display = "block";
+            videoSection.classList.add("fade-in"); // fade-in effect
+            video.volume = 0.2; // ভিডিও sound 20%
             video.play();
+
+            // ভিডিও চালু হলে background music বন্ধ হবে
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
         }
     </script>
 </body>
