@@ -2,20 +2,32 @@
 <html>
 <head>
     <title>Creat By Mahfuz </title>
-    <!-- Lexend font যোগ করা হলো -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
     <style>
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        #bgVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            flex-direction: column;
-            background-image: url('2.jpg');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Segoe UI', sans-serif;
         }
         h2 {
             font-size: 36px;
@@ -65,7 +77,7 @@
             margin-top: 20px;
             font-weight: bold;
             text-align: center;
-            font-family: 'Lexend', sans-serif; /* Lexend font */
+            font-family: 'Lexend', sans-serif;
             background: linear-gradient(270deg, red, orange, yellow, green, violet);
             background-size: 800% 800%;
             -webkit-background-clip: text;
@@ -97,14 +109,10 @@
         #videoSection {
             display: none;
             margin-top: 20px;
-            opacity: 0; /* শুরুতে লুকানো */
+            opacity: 0;
         }
         #videoSection.fade-in {
-            animation: fadeVideo 3s ease forwards; /* fade-in effect */
-        }
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
+            animation: fadeVideo 3s ease forwards;
         }
         @keyframes fadeVideo {
             from {opacity: 0;}
@@ -117,32 +125,52 @@
     </style>
 </head>
 <body>
-    <h2>Enter Your Name</h2>
-    <div class="inputBox">
-        <input type="text" id="nameInput" placeholder="Type your name">
-    </div>
-    <button onclick="showMessage()">Enter</button>
+    <!-- Background video -->
+    <video autoplay muted loop id="bgVideo">
+        <source src="frist video background.mp4" type="video/mp4">
+    </video>
 
-    <div id="message"></div>
+    <div class="content">
+        <h2>Enter Your Name</h2>
+        <div class="inputBox">
+            <input type="text" id="nameInput" placeholder="Type your name">
+        </div>
+        <button onclick="showMessage()">Enter</button>
 
-    <div id="videoSection">
-        <video id="birthdayVideo" width="400" controls playsinline>
-            <source src="Main H.mp4" type="video/mp4">
-        </video>
+        <div id="message"></div>
+
+        <div id="videoSection">
+            <video id="birthdayVideo" width="400" controls playsinline>
+                <source src="Main H.mp4" type="video/mp4">
+            </video>
+        </div>
     </div>
 
     <!-- Background music -->
     <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
 
     <script>
-        // ওয়েবসাইটে ঢুকলেই background music auto play হবে
-        window.addEventListener("load", function() {
+        // Background music auto play
+        document.addEventListener("DOMContentLoaded", function() {
             let bgMusic = document.getElementById("bgMusic");
-            bgMusic.volume = 0.2; // 20% volume
+            bgMusic.volume = 0.2;
             bgMusic.play().catch(err => {
                 console.log("Autoplay blocked:", err);
             });
         });
+
+        // Fullscreen fallback function
+        function makeFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if (element.webkitEnterFullscreen) {
+                element.webkitEnterFullscreen(); // iOS Safari
+            }
+        }
 
         function showMessage() {
             let name = document.getElementById("nameInput").value;
@@ -150,7 +178,8 @@
                 let messageDiv = document.getElementById("message");
                 messageDiv.style.display = "block";
 
-                let fullMessage = "🎉 Happy Birthday, " + name + " 🎉\nMay your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments.\nHappy Birthday 🎂";
+                let fullMessage = "🎉 Happy Birthday, " + name + 
+                    " 🎉\nMay your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments.\nHappy Birthday 🎂";
                 
                 let i = 0;
                 messageDiv.innerHTML = "";
@@ -166,15 +195,7 @@
 
                 // Enter ক্লিকের সময় fullscreen request
                 let video = document.getElementById("birthdayVideo");
-                if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.webkitEnterFullscreen) {
-                    video.webkitEnterFullscreen();
-                } else if (video.webkitRequestFullscreen) {
-                    video.webkitRequestFullscreen();
-                } else if (video.msRequestFullscreen) {
-                    video.msRequestFullscreen();
-                }
+                makeFullscreen(video);
             } else {
                 alert("Please enter your name!");
             }
@@ -186,8 +207,8 @@
             let bgMusic = document.getElementById("bgMusic");
 
             videoSection.style.display = "block";
-            videoSection.classList.add("fade-in"); // fade-in effect
-            video.volume = 0.3; // ভিডিও sound 20%
+            videoSection.classList.add("fade-in");
+            video.volume = 0.5;
             video.play();
 
             // ভিডিও চালু হলে background music বন্ধ হবে
